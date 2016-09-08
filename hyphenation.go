@@ -16,13 +16,13 @@ import (
 	"unicode"
 )
 
-// A language object for doing hyphenation
+// Lang is a language object for hyphenation. Use it by calling New(), otherwise the object is not initialized properly.
 type Lang struct {
 	patternLoaded bool
 	patterns      map[string][]byte
 }
 
-// Load patterns from the reader. Patterns are word substrings with a hyphenation priority
+// New loads patterns from the reader. Patterns are word substrings with a hyphenation priority
 // between each letter, 0s omitted. Example patterns are “.ach4 at3est 4if.” where a dot
 // denotes a word boundary. An odd number means “don't hyphenate here”, everything else allows
 // hyphenation at this point. The final priority for each position is the maximum of each priority
@@ -77,7 +77,7 @@ func New(r io.Reader) (*Lang, error) {
 	return l, nil
 }
 
-// Return an array of int with resulting break points.
+// Hyphenate returns an array of int with resulting break points.
 // For example the word “developers” with English (US) hyphenation
 // patterns could return [2 5 7 9] which means de-vel-op-ers
 func (l *Lang) Hyphenate(word string) []int {
