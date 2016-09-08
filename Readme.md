@@ -4,7 +4,7 @@ A port of TeX's hyphenation algorithm to Go
 Installation
 ------------
 
-    go install github.com/speedata/hyphenation
+    go get github.com/speedata/hyphenation
 
 
 Prerequisites
@@ -20,7 +20,7 @@ package main
 
 import (
 	"fmt"
-	"hyphenation"
+	"github.com/speedata/hyphenation"
 	"log"
 	"os"
 )
