@@ -18,8 +18,7 @@ import (
 
 // Lang is a language object for hyphenation. Use it by calling New(), otherwise the object is not initialized properly.
 type Lang struct {
-	patternLoaded bool
-	patterns      map[string][]byte
+	patterns map[string][]byte
 }
 
 // New loads patterns from the reader. Patterns are word substrings with a hyphenation priority
@@ -73,17 +72,13 @@ func New(r io.Reader) (*Lang, error) {
 		// .un3g   | .ung     | 0,0,3,0
 		// h2en.   | hen.     | 0,2,0,0
 	}
-	l.patternLoaded = true
-	return l, nil
+	return l, s.Err()
 }
 
 // Hyphenate returns an array of int with resulting break points.
 // For example the word “developers” with English (US) hyphenation
 // patterns could return [2 5 7 9] which means de-vel-op-ers
 func (l *Lang) Hyphenate(word string) []int {
-	if !l.patternLoaded {
-		panic("No patterns loaded")
-	}
 	var rword []rune
 	for _, letter := range "." + word + "." {
 		rword = append(rword, unicode.ToLower(letter))
