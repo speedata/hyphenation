@@ -1,3 +1,6 @@
+[![GoDoc](https://godoc.org/github.com/speedata/hyphenation?status.svg)](https://godoc.org/github.com/speedata/hyphenation)
+
+
 A port of TeX's hyphenation algorithm to Go
 ===========================================
 
