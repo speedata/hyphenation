@@ -1,7 +1,7 @@
 // Public domain.
 // Comments to gundlach@speedata.de
 
-// Package hyphenation hyphenate words with TeXs algorithm.
+// Package hyphenation hyphenates words with TeXs algorithm.
 //
 // The algorithm is used in TeX and originally from Franklin Liang, his thesis can be downloaded from
 // https://www.tug.org/docs/liang%20/liang-thesis.pdf
