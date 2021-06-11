@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/speedata/hyphenation?status.svg)](https://godoc.org/github.com/speedata/hyphenation) [![Build Status](https://travis-ci.org/speedata/hyphenation.svg?branch=master)](https://travis-ci.org/speedata/hyphenation)
+[![GoDoc](https://godoc.org/github.com/speedata/hyphenation?status.svg)](https://godoc.org/github.com/speedata/hyphenation) [![Build Status](https://travis-ci.com/speedata/hyphenation.svg?branch=master)](https://travis-ci.com/speedata/hyphenation)
 
 
 A port of TeX's hyphenation algorithm to Go
@@ -13,7 +13,7 @@ Installation
 Prerequisites
 -------------
 
-Download a hyphenation pattern file from CTAN, for example from <http://ctan.math.utah.edu/ctan/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/txt/>
+Download a hyphenation pattern file from CTAN, for example from <https://ctan.math.utah.edu/ctan/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/txt/>
 
 Usage
 -----
@@ -23,9 +23,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/speedata/hyphenation"
 	"log"
 	"os"
+
+	"github.com/speedata/hyphenation"
 )
 
 func main() {
