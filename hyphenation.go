@@ -77,7 +77,7 @@ func New(r io.Reader) (*Lang, error) {
 
 // Hyphenate returns an array of int with resulting break points.
 // For example the word “developers” with English (US) hyphenation
-// patterns could return [2 5 7 9] which means de-vel-op-ers
+// patterns could return [2 5 7 9] which means de-vel-op-er-s
 func (l *Lang) Hyphenate(word string) []int {
 	var rword []rune
 	for _, letter := range "." + word + "." {
@@ -90,10 +90,12 @@ func (l *Lang) Hyphenate(word string) []int {
 
 	// generate all possible substrings for the word
 	for j := 1; j < len(rword); j++ {
+		startpos = j - 1
+		if rword[0] == '.' {
+			startpos = startpos + 1
+		}
 		for i := j + 1; i <= len(rword); i++ {
-
-			startpos = j - 1
-			wordpart = rword[j-1 : i]
+			wordpart = rword[startpos:i]
 
 			// if there is a pattern for this substring
 			if pattern, ok := l.patterns[string(wordpart)]; ok {
@@ -104,11 +106,8 @@ func (l *Lang) Hyphenate(word string) []int {
 				// when the pattern contains a dot at the beginning, this
 				// marks the start of the word. Therefore there is no
 				// priority before the .
-				if wordpart[0] == '.' {
-					startpos = startpos + 1
-				}
 				for i := 0; i < len(pattern); i++ {
-					if pattern[i] > maxPrio[startpos-1+1] {
+					if pattern[i] > maxPrio[startpos-1+i] {
 						maxPrio[startpos-1+i] = pattern[i]
 					}
 				}
