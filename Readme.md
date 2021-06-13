@@ -1,5 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/speedata/hyphenation?status.svg)](https://godoc.org/github.com/speedata/hyphenation) [![Build Status](https://travis-ci.com/speedata/hyphenation.svg?branch=master)](https://travis-ci.com/speedata/hyphenation)
-
+[![GoDoc](https://godoc.org/github.com/speedata/hyphenation?status.svg)](https://godoc.org/github.com/speedata/hyphenation) [![CircleCI](https://circleci.com/gh/speedata/hyphenation/tree/master.svg?style=shield)](https://circleci.com/gh/speedata/hyphenation/tree/master)
 
 A port of TeX's hyphenation algorithm to Go
 ===========================================
