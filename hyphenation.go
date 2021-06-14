@@ -17,9 +17,12 @@ import (
 	"unicode"
 )
 
-// Lang is a language object for hyphenation. Use it by calling New(), otherwise the object is not initialized properly.
+// Lang is a language object for hyphenation.
+// Use it by calling New(), otherwise the object is not initialized properly.
 type Lang struct {
 	patterns map[string][]byte
+	Leftmin  int // The minimum number of non hyphenated runes at the beginning of a word. Defaults to 0.
+	Rightmin int // The minimum number of non hyphenated runes at the end of a word. Defaults to 0.
 }
 
 // New loads patterns from the reader. Patterns are word substrings with a hyphenation priority
@@ -28,7 +31,7 @@ type Lang struct {
 // hyphenation at this point. The final priority for each position is the maximum of each priority
 // given in each applied pattern.
 func New(r io.Reader) (*Lang, error) {
-	l := &Lang{}
+	l := &Lang{Leftmin: 0, Rightmin: 0}
 	l.patterns = make(map[string][]byte)
 	s := bufio.NewScanner(r)
 	s.Split(bufio.ScanWords)
@@ -86,13 +89,14 @@ func (l *Lang) doHyphenate(rword []rune) []patternposition {
 	var patterninfo []patternposition
 	var startpos int
 	var wordpart []rune
+	maxlen := len(rword)
 	// generate all possible substrings for the word
-	for j := 1; j < len(rword); j++ {
+	for j := 1; j < maxlen; j++ {
 		startpos = j - 1
 		// if rword[0] == '.' {
 		// 	startpos = startpos + 1
 		// }
-		for i := j + 1; i <= len(rword); i++ {
+		for i := j + 1; i <= maxlen; i++ {
 			wordpart = rword[startpos:i]
 
 			// if there is a pattern for this substring
@@ -147,9 +151,10 @@ func (l *Lang) DebugHyphenate(word string) string {
 			b.WriteRune(' ')
 			b.WriteRune(' ')
 		}
-		for i := bp.startpos + len(bp.pattern) - sub; i < len(rword); i++ {
+		for i := bp.startpos + len(bp.pattern) - sub; i < len(rword)-1; i++ {
 			b.WriteString(" |  ")
 		}
+		b.WriteString(" ")
 		b.WriteRune(' ')
 		for i := 0; i < len(bp.wordpart); i++ {
 			if bp.pattern[i] > 0 {
@@ -219,7 +224,15 @@ func (l *Lang) Hyphenate(word string) []int {
 	}
 	// the odd entries in maxPrio are valid break points
 	var positions []int
-	for i := 1; i < len(maxPrio); i++ {
+	left := 1
+	if l.Leftmin > 0 {
+		left += l.Leftmin
+	}
+	right := len(maxPrio)
+	if l.Rightmin > 0 {
+		right -= l.Rightmin
+	}
+	for i := left; i < right; i++ {
 		if maxPrio[i]%2 != 0 {
 			positions = append(positions, i)
 		}

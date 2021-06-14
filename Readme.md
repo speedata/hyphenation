@@ -42,10 +42,33 @@ func main() {
 	var h []int
 	for _, v := range []string{"Computer", "developers"} {
 		h = l.Hyphenate(v)
-		fmt.Println(v, h)
+		fmt.Println(v, h) // [3 6] and [2 5 7 9]
 	}
 }
 ````
+
+Debugging hyphenation patterns
+==============================
+
+Similar to getting the hyphenation slice, you can get a detailed view of the hyphenation patterns used in a word:
+
+````go
+str := l.DebugHyphenate("developers")
+fmt.Println(str)
+````
+
+
+results in
+
+       .   d   e   v   e   l   o   p   e   r   s   .
+         0   0   1   0   |   |   |   |   |   |   |    de1v
+         |   0   0   0   0   3   0   |   |   |   |    evel3o
+         |   |   0   0   4   0   0   |   |   |   |    ve4lo
+         |   |   |   |   |   0   0   1   0   0   |    op1er
+         |   |   |   |   |   |   |   0   0   1   0    er1s
+         |   |   |   |   |   |   |   |   4   0   2    4rs2
+    max: 0   0   1   0   4   3   0   1   4   1   2
+    final: d   e - v   e   l - o   p - e   r - s
 
 Other
 ------

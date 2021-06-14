@@ -122,3 +122,37 @@ func TestHyphenateDE(t *testing.T) {
 		}
 	}
 }
+
+func TestHyphenateDEmin(t *testing.T) {
+	r := strings.NewReader(patternsDE)
+	l, err := New(r)
+	if err != nil {
+		t.Error(err)
+	}
+	l.Leftmin = 2
+	l.Rightmin = 3
+
+	data := []struct {
+		word        string
+		breakpoints []int
+	}{
+		{"größer", []int{3}},
+		{"Schiffahrt", []int{5}},
+		{"Hühnerstall", []int{3, 6}},
+		{"ferngläser", []int{4, 7}},
+		{"denn", []int{}},
+	}
+
+	for _, entry := range data {
+		h := l.Hyphenate(entry.word)
+		if len(h) != len(entry.breakpoints) {
+			t.Errorf("Hyphenate(%s), len = %d, want %d", entry.word, len(h), len(entry.breakpoints))
+		}
+
+		for i, v := range h {
+			if bp := entry.breakpoints[i]; bp != v {
+				t.Errorf("Hyphenate(%s), breakpoint[%d] = %d, want %d", entry.word, i, bp, v)
+			}
+		}
+	}
+}
