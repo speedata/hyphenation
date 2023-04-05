@@ -74,5 +74,6 @@ Other
 ------
 Contact: <gundlach@speedata.de><br>
 Twitter: [@speedata](https://twitter.com/speedata)<br>
+Mastodon: [@speedata@typo.social](https://typo.social/@speedata)<br>
 License: cc0 / public domain (<https://creativecommons.org/publicdomain/zero/1.0/>)<br>
-Status: Just an example hack, never used it in production yet
+Status: used in the [boxes and glue](https://github.com/speedata/boxesandglue) library.
