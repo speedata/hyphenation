@@ -154,12 +154,21 @@ func (l *Lang) DebugHyphenate(word string) string {
 		for i := bp.startpos + len(bp.pattern) - sub; i < len(rword)-1; i++ {
 			b.WriteString(" |  ")
 		}
-		b.WriteString(" ")
-		b.WriteRune(' ')
+		b.WriteString("  ")
+		var pat []byte
+		if bp.wordpart[0] == '.' {
+			pat = append(pat, 0)
+			pat = append(pat, bp.pattern...)
+		} else {
+			pat = bp.pattern
+		}
+
 		for i := 0; i < len(bp.wordpart); i++ {
-			if bp.pattern[i] > 0 {
-				b.WriteRune(rune(bp.pattern[i]) + '0')
+			if pi := pat[i]; pi > 0 {
+				// the priority
+				b.WriteRune(rune(pi) + '0')
 			}
+			// the word part
 			b.WriteRune(bp.wordpart[i])
 		}
 		lastprio := bp.pattern[len(bp.pattern)-1]
