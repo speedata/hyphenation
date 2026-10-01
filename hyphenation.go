@@ -14,15 +14,20 @@ import (
 	"bufio"
 	"io"
 	"strings"
+	"sync"
 	"unicode"
 )
 
 // Lang is a language object for hyphenation.
 // Use it by calling New(), otherwise the object is not initialized properly.
+// A Lang is safe for concurrent use by multiple goroutines.
 type Lang struct {
-	patterns map[string][]byte
-	Leftmin  int // The minimum number of non hyphenated runes at the beginning of a word. Defaults to 0.
-	Rightmin int // The minimum number of non hyphenated runes at the end of a word. Defaults to 0.
+	// mu guards hyphenatedWords, the cache of doHyphenate.
+	mu              sync.Mutex
+	hyphenatedWords map[string][]patternposition
+	patterns        map[string][]byte
+	Leftmin         int // The minimum number of non hyphenated runes at the beginning of a word. Defaults to 0.
+	Rightmin        int // The minimum number of non hyphenated runes at the end of a word. Defaults to 0.
 }
 
 // New loads patterns from the reader. Patterns are word substrings with a hyphenation priority
@@ -33,6 +38,7 @@ type Lang struct {
 func New(r io.Reader) (*Lang, error) {
 	l := &Lang{Leftmin: 0, Rightmin: 0}
 	l.patterns = make(map[string][]byte)
+	l.hyphenatedWords = make(map[string][]patternposition)
 	s := bufio.NewScanner(r)
 	s.Split(bufio.ScanWords)
 
@@ -86,6 +92,13 @@ type patternposition struct {
 }
 
 func (l *Lang) doHyphenate(rword []rune) []patternposition {
+	str := string(rword)
+	l.mu.Lock()
+	pp, ok := l.hyphenatedWords[str]
+	l.mu.Unlock()
+	if ok {
+		return pp
+	}
 	var patterninfo []patternposition
 	var startpos int
 	var wordpart []rune
@@ -109,6 +122,9 @@ func (l *Lang) doHyphenate(rword []rune) []patternposition {
 			}
 		}
 	}
+	l.mu.Lock()
+	l.hyphenatedWords[str] = patterninfo
+	l.mu.Unlock()
 	return patterninfo
 }
 

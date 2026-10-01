@@ -1,7 +1,9 @@
 package hyphenation
 
 import (
+	"slices"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -155,4 +157,37 @@ func TestHyphenateDEmin(t *testing.T) {
 			}
 		}
 	}
+}
+
+// One Lang hyphenates in several goroutines at once, each word new to the
+// cache in one of them.
+func TestHyphenateConcurrently(t *testing.T) {
+	l, err := New(strings.NewReader(patternsEN))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var words []string
+	for _, a := range "abcdefghij" {
+		for _, b := range "klmnopqrst" {
+			words = append(words, "com"+string(a)+"puter"+string(b)+"possession")
+		}
+	}
+	want := make([][]int, len(words))
+	single, _ := New(strings.NewReader(patternsEN))
+	for i, w := range words {
+		want[i] = single.Hyphenate(w)
+	}
+	var wg sync.WaitGroup
+	for range 8 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i, w := range words {
+				if got := l.Hyphenate(w); !slices.Equal(got, want[i]) {
+					t.Errorf("Hyphenate(%s) = %v, want %v", w, got, want[i])
+				}
+			}
+		}()
+	}
+	wg.Wait()
 }
