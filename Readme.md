@@ -1,4 +1,4 @@
-[![Go Reference](https://pkg.go.dev/badge/github.com/speedata/hyphenation.svg)](https://pkg.go.dev/github.com/speedata/hyphenation)
+[![Go Reference](https://pkg.go.dev/badge/github.com/speedata/hyphenation.svg)](https://pkg.go.dev/github.com/speedata/hyphenation)&nbsp;[![Explore in Constellation](https://img.shields.io/badge/Explore%20in-Constellation-blue)](https://constellation.speedata.de/#hyphenation)
 
 A port of TeX's hyphenation algorithm to Go
 ===========================================
