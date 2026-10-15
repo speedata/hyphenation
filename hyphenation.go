@@ -85,6 +85,20 @@ func New(r io.Reader) (*Lang, error) {
 	return l, s.Err()
 }
 
+// Clone returns a Lang that shares the patterns with l, which hyphenating
+// never changes, and has l's minimums and a word cache of its own. Parsing
+// patterns is expensive and the cache grows with every new word, so users of
+// one pattern set that come and go, such as documents, each take a clone: the
+// patterns are parsed once, and a clone's cache goes away with it.
+func (l *Lang) Clone() *Lang {
+	return &Lang{
+		hyphenatedWords: make(map[string][]patternposition),
+		patterns:        l.patterns,
+		Leftmin:         l.Leftmin,
+		Rightmin:        l.Rightmin,
+	}
+}
+
 type patternposition struct {
 	startpos int
 	wordpart []rune

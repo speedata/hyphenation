@@ -191,3 +191,33 @@ func TestHyphenateConcurrently(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+// A clone hyphenates as the original, with the original's minimums, shares
+// its patterns and keeps a word cache of its own.
+func TestClone(t *testing.T) {
+	l, err := New(strings.NewReader(patternsDE))
+	if err != nil {
+		t.Fatal(err)
+	}
+	l.Leftmin, l.Rightmin = 2, 3
+	c := l.Clone()
+	if c.Leftmin != 2 || c.Rightmin != 3 {
+		t.Errorf("clone minimums %d and %d, want 2 and 3", c.Leftmin, c.Rightmin)
+	}
+	for _, w := range []string{"größer", "Schiffahrt", "Hühnerstall", "ferngläser"} {
+		if got, want := c.Hyphenate(w), l.Hyphenate(w); !slices.Equal(got, want) {
+			t.Errorf("clone Hyphenate(%s) = %v, want %v", w, got, want)
+		}
+	}
+	l.Hyphenate("Sonnenschein")
+	if _, ok := c.hyphenatedWords[".sonnenschein."]; ok {
+		t.Error("a word the original hyphenated is in the clone's cache")
+	}
+	if len(c.hyphenatedWords) != 4 || len(l.hyphenatedWords) != 5 {
+		t.Errorf("caches hold %d (clone) and %d (original) words, want 4 and 5", len(c.hyphenatedWords), len(l.hyphenatedWords))
+	}
+	l.patterns["zzz"] = []byte{0, 0, 0, 0}
+	if _, ok := c.patterns["zzz"]; !ok {
+		t.Error("the clone does not share the original's patterns")
+	}
+}

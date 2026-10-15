@@ -47,6 +47,16 @@ func main() {
 }
 ````
 
+Sharing patterns
+----------------
+
+A `Lang` keeps every word it hyphenates in a cache. To parse a pattern file once and use it for many documents, give each document a clone: it shares the patterns and has its own cache and minimums, which go away with it.
+
+````go
+doc := l.Clone()
+doc.Leftmin, doc.Rightmin = 2, 3
+````
+
 Debugging hyphenation patterns
 ==============================
 
