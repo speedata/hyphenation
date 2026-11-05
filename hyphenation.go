@@ -264,10 +264,7 @@ func (l *Lang) Hyphenate(word string) []int {
 	// the odd entries in maxPrio are valid break points
 	var positions []int
 	left := max(l.Leftmin, 1)
-	right := len(maxPrio)
-	if l.Rightmin > 0 {
-		right -= l.Rightmin
-	}
+	right := len(maxPrio) - max(l.Rightmin, 1)
 	for i := left; i < right; i++ {
 		if maxPrio[i]%2 != 0 {
 			positions = append(positions, i)

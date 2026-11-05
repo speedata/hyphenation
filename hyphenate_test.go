@@ -191,6 +191,35 @@ func TestHyphenateMinimumsAreExact(t *testing.T) {
 	}
 }
 
+// A pattern with an odd digit at its end also matches at the end of a word,
+// and there is no break after the last rune without a minimum either.
+func TestHyphenateNoBreakAfterLastRune(t *testing.T) {
+	data := []struct {
+		rightmin    int
+		word        string
+		breakpoints []int
+	}{
+		{-1, "grab", []int{}},
+		{0, "grab", []int{}},
+		{1, "grab", []int{}},
+		{0, "abgrab", []int{2}},
+		{1, "abgrab", []int{2}},
+		{4, "abgrab", []int{2}},
+		{5, "abgrab", []int{}},
+	}
+
+	for _, entry := range data {
+		l, err := New(strings.NewReader("ab1\n"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		l.Rightmin = entry.rightmin
+		if h := l.Hyphenate(entry.word); !slices.Equal(h, entry.breakpoints) {
+			t.Errorf("Hyphenate(%s) at Rightmin %d = %v, want %v", entry.word, entry.rightmin, h, entry.breakpoints)
+		}
+	}
+}
+
 // One Lang hyphenates in several goroutines at once, each word new to the
 // cache in one of them.
 func TestHyphenateConcurrently(t *testing.T) {
