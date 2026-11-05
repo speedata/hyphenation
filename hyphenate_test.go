@@ -159,6 +159,38 @@ func TestHyphenateDEmin(t *testing.T) {
 	}
 }
 
+// Leftmin and Rightmin are the numbers of runes that stay before and after a
+// break, no more. Without a minimum there is still no break before the first
+// rune.
+func TestHyphenateMinimumsAreExact(t *testing.T) {
+	data := []struct {
+		leftmin, rightmin int
+		word              string
+		breakpoints       []int
+	}{
+		{0, 0, "Ofenrohr", []int{1}},
+		{1, 1, "Ofenrohr", []int{1}},
+		{2, 1, "Ofenrohr", []int{}},
+		{2, 2, "Eisenbahn", []int{2}},
+		{3, 2, "Eisenbahn", []int{}},
+		{-1, -1, "Abfahrt", []int{2, 6}},
+		{1, 1, "Abfahrt", []int{2, 6}},
+		{2, 2, "Abfahrt", []int{2}},
+		{3, 3, "Abfahrt", []int{}},
+	}
+
+	for _, entry := range data {
+		l, err := New(strings.NewReader(patternsDE))
+		if err != nil {
+			t.Fatal(err)
+		}
+		l.Leftmin, l.Rightmin = entry.leftmin, entry.rightmin
+		if h := l.Hyphenate(entry.word); !slices.Equal(h, entry.breakpoints) {
+			t.Errorf("Hyphenate(%s) at minimums %d and %d = %v, want %v", entry.word, entry.leftmin, entry.rightmin, h, entry.breakpoints)
+		}
+	}
+}
+
 // One Lang hyphenates in several goroutines at once, each word new to the
 // cache in one of them.
 func TestHyphenateConcurrently(t *testing.T) {
